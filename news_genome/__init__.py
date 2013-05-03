@@ -34,12 +34,12 @@ class ArticleSource():
             raise StopIteration()
 
         self.current+=1
-        url = 'http://glass-api.prd.use1.nytimes.com/glass/api/v1/lookup.json?collection=scoop_article&url=%s' % self.queue[self.current]
         try:
+            url = 'http://glass-api.prd.use1.nytimes.com/glass/api/v1/lookup.json?collection=scoop_article&url=%s' % self.queue[self.current]
             article_data = json.loads(urllib.urlopen(url).read())
             url,article = article_data.popitem()
             return Article(article)
-        except IOError:
+        except: 
             raise StopIteration()
 
 
@@ -57,6 +57,8 @@ class Article():
     def __eq__(self,other):
         return (self.__hash__() == other.__hash__())
 
+    def get_headline(self):
+        return self.metadata['headline'].encode('utf8')
 
 if __name__ == '__main__':
     articles = ArticleSource()

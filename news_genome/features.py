@@ -20,11 +20,9 @@ def avg_word_length(text):
     words = [len(w) for w in word_tokenize(text)]
     return reduce(lambda x, y: x + y, words) / len(words)
 
-@nohtml
 def number_of_grafs(text):
     return len(regexp_tokenize(text, r'\<\\\/p\>', gaps=True))
 
-@nohtml
 def avg_graf_length(text):
     grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\<\\\/p\>', gaps=True)]
     return reduce(lambda x, y: x + y, grafs) / len(grafs)
@@ -38,16 +36,18 @@ def punct_count(text, punct='?'):
     return len(list(filter(lambda c: c in text, punct)))
 
 @nohtml
-def pos_count(text,tag='NN'):
+def pos_count(text):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
-    return cfd[tag].N()
+    return dict([(tag,cfd[tag].N()) for tag in cfd.conditions()]) 
 
 @nohtml
 def pos_percentages(text,tag='NN'):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
-    return float(cfd[tag].N())/float(len(words))
+    return dict([(tag+'%',float(cfd[tag].N())/float(len(words))) for tag in cfd.conditions()])
+
+metrics = [word_count,sentence_count,avg_sentence_length,avg_word_length,number_of_grafs,avg_graf_length,length_of_first_graf,punct_count]
 
 if __name__ == '__main__':
     # Cheap testing, one two

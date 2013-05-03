@@ -1,13 +1,5 @@
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
-from mlstripper import strip_tags
-from functools import wraps
-
-def nohtml(fn):
-    @wraps(fn)
-    def wrapper(text,*args,**kwargs):
-        text = strip_tags(text)
-        return fn(text,*args,**kwargs)
-    return wrapper
+from mlstripper import nohtml
 
 @nohtml
 def word_count(text):

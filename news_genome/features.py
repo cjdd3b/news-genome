@@ -24,7 +24,6 @@ def avg_word_length(text):
 @nohtml
 def avg_word_syllables(text):
     words = [float(CountSyllables(w)) for w in word_tokenize(text)]
-    print words
     return reduce(lambda x, y: x + y, words) / float(len(words))
 
 @nohtml
@@ -80,6 +79,7 @@ if __name__ == '__main__':
     print avg_graf_length(story)
     print punct_count(story, '?')
     print punct_count(story, '!')
+    print punct_count(story, '"')
     print pos_count(story)
     print pos_percentages(story)
     print avg_word_syllables(story)

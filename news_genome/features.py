@@ -1,4 +1,4 @@
-from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
 
 def word_count(text):
     return len(word_tokenize(text))
@@ -10,6 +10,11 @@ def avg_word_length(text):
     words = [len(w) for w in word_tokenize(text)]
     return reduce(lambda x, y: x + y, words) / len(words)
 
+def number_of_grafs(text):
+    return len(regexp_tokenize(text, r'\<\\\/p\>', gaps=True))
+
+def length_of_first_graf(text):
+    return word_count(regexp_tokenize(text, r'\<\\\/p\>', gaps=True)[0])
 
 
 if __name__ == '__main__':
@@ -22,3 +27,5 @@ if __name__ == '__main__':
     print word_count(story)
     print sentence_count(story)
     print avg_word_length(story)
+    print number_of_grafs(story)
+    print length_of_first_graf(story)

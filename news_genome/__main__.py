@@ -5,49 +5,38 @@ from StringIO import StringIO
 from news_genome import ArticleSource
 import codecs
 
-class UnicodeWriter:
-    """
-    A CSV writer which will write rows to CSV file "f",
-    which is encoded in the given encoding.
-    """
-
-    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
-        # Redirect output to a queue
-        self.queue = StringIO()
-        self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
-        self.stream = f
-        self.encoder = codecs.getincrementalencoder(encoding)()
-
-    def writerow(self, row):
-        self.writer.writerow([s.encode("utf-8") for s in row])
-        # Fetch UTF-8 output from the queue ...
-        data = self.queue.getvalue()
-        data = data.decode("utf-8")
-        # ... and reencode it into the target encoding
-        data = self.encoder.encode(data)
-        # write to the target stream
-        self.stream.write(data)
-        # empty queue
-        self.queue.truncate(0)
-
-    def writerows(self, rows):
-        for row in rows:
-            self.writerow(row)
-
-
-
 def generate_report():
     articles = ArticleSource()
-    report_file = StringIO()
-    report = UnicodeWriter(report_file)
-    report.writerow(['article']+[metric.__name__ for metric in metrics])
+    report_file = open('genome.csv','w')
+    report = csv.writer(report_file) 
+    report.writerow([
+         'article',
+         'word_count',
+         'sentence_count',
+         'avg_word_length',
+         'number_of_grafs',
+         'length_of_first_graf',
+         'avg_sentence_length',
+         'avg_graf_length',
+         'punct_count_?',
+         'punct_count_!',
+         'punct_count_"',
+         #'pos_count_NN',
+         #'pos_count_VBP',
+         #'pos_count_JJ',
+         'pos_percentages_NN',
+         'pos_percentages_VBP',
+         'pos_percentages_JJ',
+         'avg_word_syllables',
+         'flesch_readability',
+         'smog_readability'
+    ])
     for article in articles:
-        results = [article.metadata['headline']]
-        for metric in metrics:
-            results.append(str(metric(article.__str__())))
+        results = [article.get_headline()] + metrics(article.__str__())
+        print results
         report.writerow(results)
-    report_file.seek(0)
-    print report_file.read()
+        report_file.flush()
+    report_file.close()
         
 
 generate_report()

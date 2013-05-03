@@ -58,7 +58,7 @@ class Article():
         return (self.__hash__() == other.__hash__())
 
     def get_headline(self):
-        return self.metadata['headline'].encode('utf8')
+        return self.metadata['headline'].encode('ascii','ignore')
 
 if __name__ == '__main__':
     articles = ArticleSource()

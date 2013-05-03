@@ -42,35 +42,55 @@ def smog_readability(text):
     polysyllables = sum(CountSyllables(x) > 3 for x in word_tokenize(text))
     return 1.0430 * math.sqrt(polysyllables * (30 / num_sentences)) + 3.1291
 
-@nohtml
 def number_of_grafs(text):
-    return len(regexp_tokenize(text, r'\n', gaps=True))
+    return len(regexp_tokenize(text, r'\<\/p\>', gaps=True))
 
 def avg_graf_length(text):
-    grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\n', gaps=True)]
+    grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\<\/p\>', gaps=True)]
     return reduce(lambda x, y: x + y, grafs) / len(grafs)
 
-@nohtml
 def length_of_first_graf(text):
-    return word_count(regexp_tokenize(text, r'\n', gaps=True)[0])
+    return word_count(regexp_tokenize(text, r'\<\/p\>', gaps=True)[0])
 
 @nohtml
 def punct_count(text, punct='?'):
     return len(list(filter(lambda c: c in text, punct)))
 
 @nohtml
-def pos_count(text):
+def pos_count(text,tag='NN'):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
-    return dict([(tag,cfd[tag].N()) for tag in cfd.conditions()]) 
+    return cfd[tag].N()
 
 @nohtml
 def pos_percentages(text,tag='NN'):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
-    return dict([(tag+'%',float(cfd[tag].N())/float(len(words))) for tag in cfd.conditions()])
+    return float(cfd[tag].N())/float(len(words))
 
-metrics = [word_count,sentence_count,avg_sentence_length,avg_word_length,number_of_grafs,avg_graf_length,length_of_first_graf,punct_count]
+@nohtml
+def metrics(story):
+    return [
+         word_count(story),
+         sentence_count(story),
+         avg_word_length(story),
+         number_of_grafs(story),
+         length_of_first_graf(story),
+         avg_sentence_length(story),
+         avg_graf_length(story),
+         punct_count(story, '?'),
+         punct_count(story, '!'),
+         punct_count(story, '"'),
+         #pos_count(story,'NN'),
+         #pos_count(story,'VBP'),
+         #pos_count(story,'JJ'),
+         pos_percentages(story,'NN'),
+         pos_percentages(story,'VBP'),
+         pos_percentages(story,'JJ'),
+         avg_word_syllables(story),
+         flesch_readability(story),
+         smog_readability(story)                        
+    ]
 
 if __name__ == '__main__':
     # Cheap testing, one two

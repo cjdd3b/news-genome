@@ -25,7 +25,7 @@ def length_of_first_graf(text):
     return word_count(regexp_tokenize(text, r'\<\\\/p\>', gaps=True)[0])
 
 def punct_count(text, punct='?'):
-    pass
+    return len(list(filter(lambda c: c in text, punct)))
 
 
 if __name__ == '__main__':
@@ -42,3 +42,5 @@ if __name__ == '__main__':
     print length_of_first_graf(story)
     print avg_sentence_length(story)
     print avg_graf_length(story)
+    print punct_count(story, '?')
+    print punct_count(story, '!')

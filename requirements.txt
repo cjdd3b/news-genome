@@ -1,0 +1,2 @@
+nltk==2.0.4
+nltk-contrib==2.0.4

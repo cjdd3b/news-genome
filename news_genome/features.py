@@ -6,6 +6,10 @@ def word_count(text):
 def sentence_count(text):
     return len(sent_tokenize(text))
 
+def avg_sentence_length(text):
+    sents = [len(word_tokenize(s)) for s in sent_tokenize(text)]
+    return reduce(lambda x, y: x + y, sents) / len(sents)
+
 def avg_word_length(text):
     words = [len(w) for w in word_tokenize(text)]
     return reduce(lambda x, y: x + y, words) / len(words)
@@ -13,8 +17,15 @@ def avg_word_length(text):
 def number_of_grafs(text):
     return len(regexp_tokenize(text, r'\<\\\/p\>', gaps=True))
 
+def avg_graf_length(text):
+    grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\<\\\/p\>', gaps=True)]
+    return reduce(lambda x, y: x + y, grafs) / len(grafs)
+
 def length_of_first_graf(text):
     return word_count(regexp_tokenize(text, r'\<\\\/p\>', gaps=True)[0])
+
+def punct_count(text, punct='?'):
+    pass
 
 
 if __name__ == '__main__':
@@ -29,3 +40,5 @@ if __name__ == '__main__':
     print avg_word_length(story)
     print number_of_grafs(story)
     print length_of_first_graf(story)
+    print avg_sentence_length(story)
+    print avg_graf_length(story)

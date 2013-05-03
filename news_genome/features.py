@@ -15,12 +15,12 @@ def sentence_count(text):
 @nohtml
 def avg_sentence_length(text):
     sents = [len(word_tokenize(s)) for s in sent_tokenize(text)]
-    return reduce(lambda x, y: x + y, sents) / len(sents)
+    return reduce(lambda x, y: x + y, sents) / float(len(sents))
 
 @nohtml
 def avg_word_length(text):
     words = [len(w) for w in word_tokenize(text)]
-    return reduce(lambda x, y: x + y, words) / len(words)
+    return reduce(lambda x, y: x + y, words) / float(len(words))
 
 @nohtml
 def avg_word_syllables(text):

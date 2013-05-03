@@ -1,3 +1,4 @@
+import hashlib
 import urllib,urllib2
 import nltk
 import json
@@ -45,12 +46,17 @@ class ArticleSource():
 class Article():
 
     def __init__(self,data):
-        self.metadata = data
+        self.metadata = data['data']['cms']['article']
 
     def __str__(self):
-        return strip_tags(self.metadata['data']['cms']['article']['body'])
+        return strip_tags(self.metadata['body'])
+
+    def __hash__(self):
+        return hashlib.md5(self.metadata['headline'])
+
+    def __eq__(self,other):
+        return (self.__hash__() == other.__hash__())
 
 
 if __name__ == '__main__':
     articles = ArticleSource()
-    print articles.next()

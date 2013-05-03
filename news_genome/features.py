@@ -1,3 +1,4 @@
+from nltk import pos_tag,FreqDist,ConditionalFreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
 from mlstripper import nohtml
 
@@ -36,6 +37,17 @@ def length_of_first_graf(text):
 def punct_count(text, punct='?'):
     return len(list(filter(lambda c: c in text, punct)))
 
+@nohtml
+def pos_count(text,tag='NN'):
+    words = word_tokenize(text)
+    cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
+    return cfd[tag].N()
+
+@nohtml
+def pos_percentages(text,tag='NN'):
+    words = word_tokenize(text)
+    cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
+    return float(cfd[tag].N())/float(len(words))
 
 if __name__ == '__main__':
     # Cheap testing, one two
@@ -53,3 +65,5 @@ if __name__ == '__main__':
     print avg_graf_length(story)
     print punct_count(story, '?')
     print punct_count(story, '!')
+    print pos_count(story)
+    print pos_percentages(story)

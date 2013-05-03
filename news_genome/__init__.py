@@ -2,12 +2,12 @@ import urllib,urllib2
 import nltk
 import json
 from nltk.corpus import brown
-from HTMLParser import HTMLParser
 from datetime import datetime,timedelta
 import time
 import sys
 import collections
 import re
+from mlstripper import strip_tags
 
 start_date = datetime.utcnow()-timedelta(days=1)
 end_date = datetime.utcnow()
@@ -40,20 +40,6 @@ class ArticleSource():
             return Article(article)
         except IOError:
             raise StopIteration()
-
-class MLStripper(HTMLParser):
-    def __init__(self):
-        self.reset()
-        self.fed = []
-    def handle_data(self, d):
-        self.fed.append(d)
-    def get_data(self):
-        return ''.join(self.fed)
-
-def strip_tags(html):
-    s = MLStripper()
-    s.feed(html)
-    return s.get_data()
 
 
 class Article():

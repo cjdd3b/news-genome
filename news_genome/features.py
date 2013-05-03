@@ -1,29 +1,46 @@
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
+from mlstripper import strip_tags
+from functools import wraps
 
+def nohtml(fn):
+    @wraps(fn)
+    def wrapper(text,*args,**kwargs):
+        text = strip_tags(text)
+        return fn(text,*args,**kwargs)
+    return wrapper
+
+@nohtml
 def word_count(text):
     return len(word_tokenize(text))
 
+@nohtml
 def sentence_count(text):
     return len(sent_tokenize(text))
 
+@nohtml
 def avg_sentence_length(text):
     sents = [len(word_tokenize(s)) for s in sent_tokenize(text)]
     return reduce(lambda x, y: x + y, sents) / len(sents)
 
+@nohtml
 def avg_word_length(text):
     words = [len(w) for w in word_tokenize(text)]
     return reduce(lambda x, y: x + y, words) / len(words)
 
+@nohtml
 def number_of_grafs(text):
     return len(regexp_tokenize(text, r'\<\\\/p\>', gaps=True))
 
+@nohtml
 def avg_graf_length(text):
     grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\<\\\/p\>', gaps=True)]
     return reduce(lambda x, y: x + y, grafs) / len(grafs)
 
+@nohtml
 def length_of_first_graf(text):
     return word_count(regexp_tokenize(text, r'\<\\\/p\>', gaps=True)[0])
 
+@nohtml
 def punct_count(text, punct='?'):
     return len(list(filter(lambda c: c in text, punct)))
 

@@ -1,6 +1,7 @@
 from nltk import pos_tag,FreqDist,ConditionalFreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
 from mlstripper import nohtml
+from lib.SyllableCounter import CountSyllables
 
 @nohtml
 def word_count(text):
@@ -21,17 +22,31 @@ def avg_word_length(text):
     return reduce(lambda x, y: x + y, words) / len(words)
 
 @nohtml
+def avg_word_syllables(text):
+    words = [float(CountSyllables(w)) for w in word_tokenize(text)]
+    print words
+    return reduce(lambda x, y: x + y, words) / float(len(words))
+
+@nohtml
+def flesch_readability(text):
+    word_toks = word_tokenize(text)
+    num_words = len(word_toks)
+    num_syllables = sum([float(CountSyllables(w)) for w in word_toks])
+    num_sentences = len(sent_tokenize(text))
+    return 206.835 - (1.015 *(num_words / num_sentences)) - (84.6 * (num_syllables / num_words))
+
+@nohtml
 def number_of_grafs(text):
-    return len(regexp_tokenize(text, r'\<\\\/p\>', gaps=True))
+    return len(regexp_tokenize(text, r'\n', gaps=True))
 
 @nohtml
 def avg_graf_length(text):
-    grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\<\\\/p\>', gaps=True)]
+    grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\n', gaps=True)]
     return reduce(lambda x, y: x + y, grafs) / len(grafs)
 
 @nohtml
 def length_of_first_graf(text):
-    return word_count(regexp_tokenize(text, r'\<\\\/p\>', gaps=True)[0])
+    return word_count(regexp_tokenize(text, r'\n', gaps=True)[0])
 
 @nohtml
 def punct_count(text, punct='?'):
@@ -67,3 +82,5 @@ if __name__ == '__main__':
     print punct_count(story, '!')
     print pos_count(story)
     print pos_percentages(story)
+    print avg_word_syllables(story)
+    print flesch_readability(story)

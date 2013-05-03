@@ -1,3 +1,4 @@
+import math
 from nltk import pos_tag,FreqDist,ConditionalFreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
 from mlstripper import nohtml
@@ -32,7 +33,14 @@ def flesch_readability(text):
     num_words = len(word_toks)
     num_syllables = sum([float(CountSyllables(w)) for w in word_toks])
     num_sentences = len(sent_tokenize(text))
-    return 206.835 - (1.015 *(num_words / num_sentences)) - (84.6 * (num_syllables / num_words))
+    return 206.835 - (1.015 * (num_words / num_sentences)) - (84.6 * (num_syllables / num_words))
+
+@nohtml
+def smog_readability(text):
+    sentences = sent_tokenize(text)
+    num_sentences = len(sentences)
+    polysyllables = sum(CountSyllables(x) > 3 for x in word_tokenize(text))
+    return 1.0430 * math.sqrt(polysyllables * (30 / num_sentences)) + 3.1291
 
 @nohtml
 def number_of_grafs(text):
@@ -84,3 +92,4 @@ if __name__ == '__main__':
     print pos_percentages(story)
     print avg_word_syllables(story)
     print flesch_readability(story)
+    print smog_readability(story) 

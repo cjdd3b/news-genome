@@ -11,7 +11,9 @@ import random
 patterns = [
             (r'(.*ing$|.*ed$|.*es$)', 'V'),
             (r'(.*\'s$|.*s$)','NN'),
-            (r'(.*tive$|.*ly$)','JJ')
+            (r'(.*tive$|.*ly$)','JJ'),
+            (r'(.*est$)','JJS'),
+            (r'(.*er$)','JJR')
         ]
 
 
@@ -24,9 +26,9 @@ def get_tagger():
     # for testing.
     print("Loading tagged data... ")
     tagged_data =  brown_tagged_sents
-    cutoff = int(2000*.8)
+    cutoff = int(8000*.8)
     training_data = tagged_data[:cutoff]
-    gold_data = tagged_data[cutoff:2000]
+    gold_data = tagged_data[cutoff:8000]
     testing_data = [[t[0] for t in sent] for sent in gold_data]
     print("Done loading.")
 
@@ -58,5 +60,6 @@ if __name__ == '__main__':
     tagger = get_tagger()
     with Timer() as t:
         tags = tagger.tag(word_tokenize(strip_tags(article.__str__())))
+        print tags
     print t.interval
     print tagger.evaluate(brown_tagged_sents)

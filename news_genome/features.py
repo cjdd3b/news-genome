@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- 
+import re
 from timer import Timer
 import math
 from nltk import pos_tag,FreqDist,ConditionalFreqDist
@@ -43,6 +44,7 @@ def avg_word_syllables(text):
 @nohtml
 @timeme
 def flesch_readability(text):
+    text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.FleschReadingEase(text)
     #word_toks = word_tokenize(text)
@@ -56,6 +58,7 @@ def flesch_readability(text):
 @nohtml
 @timeme
 def smog_readability(text):
+    text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.SMOGIndex(text)
     #sentences = sent_tokenize(text)
@@ -68,6 +71,7 @@ def smog_readability(text):
 @nohtml
 @timeme
 def coleman_liau_readability(text):
+    text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.ColemanLiauIndex(text)
     return contrib_score
@@ -102,7 +106,9 @@ def pos_count(text,tag='NN'):
 def pos_percentages(text,tag='NN'):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  tagger.tag(words))
-    return float(cfd[tag].N())/float(len(words))
+    relevant_tags = filter(lambda c: re.match(tag,c), cfd.conditions())
+    sum_tags = sum([ cfd[c].N() for c in  relevant_tags ])
+    return float(sum_tags)/float(len(words))
 
 @timeme
 def metrics(story):
@@ -120,9 +126,9 @@ def metrics(story):
          #pos_count(story,'NN'),
          #pos_count(story,'VBP'),
          #pos_count(story,'JJ'),
-         pos_percentages(story,'NN'),
-         pos_percentages(story,'VBP'),
-         pos_percentages(story,'JJ'),
+         pos_percentages(story,'N.+'),
+         pos_percentages(story,'V.+'),
+         pos_percentages(story,'JJ.+'),
          avg_word_syllables(story),
          flesch_readability(story),
          smog_readability(story),
@@ -147,7 +153,9 @@ if __name__ == '__main__':
     print punct_count(story, '!')
     print punct_count(story, '”')
     print pos_count(story)
-    print pos_percentages(story)
+    print pos_percentages(story,'N.+')
+    print pos_percentages(story,'V.+')
+    print pos_percentages(story,'JJ.+')
     print avg_word_syllables(story)
     print flesch_readability(story)
     print smog_readability(story) 

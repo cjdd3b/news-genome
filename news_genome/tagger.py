@@ -26,9 +26,9 @@ def get_tagger():
     # for testing.
     print("Loading tagged data... ")
     tagged_data =  brown_tagged_sents
-    cutoff = int(8000*.8)
+    cutoff = int(1000*.8)
     training_data = tagged_data[:cutoff]
-    gold_data = tagged_data[cutoff:8000]
+    gold_data = tagged_data[cutoff:1000]
     testing_data = [[t[0] for t in sent] for sent in gold_data]
     print("Done loading.")
 

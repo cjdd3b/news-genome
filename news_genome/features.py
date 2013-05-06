@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*- 
+import sys
 import re
 from timer import Timer
 import math
 from nltk import pos_tag,FreqDist,ConditionalFreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
+sys.path.insert(0,'nltk_contrib/')
+import nltk_contrib
+print nltk_contrib
 from nltk_contrib.readability.readabilitytests import ReadabilityTool
 from mlstripper import nohtml,timeme
 from lib.SyllableCounter import CountSyllables
 from news_genome import ArticleSource
-import sys
 from tagger import get_tagger
 
 tagger = get_tagger()
@@ -44,7 +47,7 @@ def avg_word_syllables(text):
 @nohtml
 @timeme
 def flesch_readability(text):
-    text = text.encode('ascii','ignore')
+    #text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.FleschReadingEase(text)
     #word_toks = word_tokenize(text)
@@ -58,7 +61,7 @@ def flesch_readability(text):
 @nohtml
 @timeme
 def smog_readability(text):
-    text = text.encode('ascii','ignore')
+    #text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.SMOGIndex(text)
     #sentences = sent_tokenize(text)
@@ -71,7 +74,7 @@ def smog_readability(text):
 @nohtml
 @timeme
 def coleman_liau_readability(text):
-    text = text.encode('ascii','ignore')
+    #text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.ColemanLiauIndex(text)
     return contrib_score
@@ -128,7 +131,7 @@ def metrics(story):
          #pos_count(story,'JJ'),
          pos_percentages(story,'N.+'),
          pos_percentages(story,'V.+'),
-         pos_percentages(story,'JJ.+'),
+         pos_percentages(story,'J.+'),
          avg_word_syllables(story),
          flesch_readability(story),
          smog_readability(story),

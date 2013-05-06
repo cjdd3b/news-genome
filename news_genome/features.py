@@ -3,10 +3,14 @@ from timer import Timer
 import math
 from nltk import pos_tag,FreqDist,ConditionalFreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
+from nltk_contrib.readability.readabilitytests import ReadabilityTool
 from mlstripper import nohtml,timeme
 from lib.SyllableCounter import CountSyllables
 from news_genome import ArticleSource
 import sys
+from tagger import get_tagger
+
+tagger = get_tagger()
 
 @nohtml
 @timeme
@@ -39,19 +43,34 @@ def avg_word_syllables(text):
 @nohtml
 @timeme
 def flesch_readability(text):
-    word_toks = word_tokenize(text)
-    num_words = len(word_toks)
-    num_syllables = sum([float(CountSyllables(w)) for w in word_toks])
-    num_sentences = len(sent_tokenize(text))
-    return 206.835 - (1.015 * (num_words / num_sentences)) - (84.6 * (num_syllables / num_words))
+    rt = ReadabilityTool()
+    contrib_score = rt.FleschReadingEase(text)
+    #word_toks = word_tokenize(text)
+    #num_words = len(word_toks)
+    #num_syllables = sum([float(CountSyllables(w)) for w in word_toks])
+    #num_sentences = len(sent_tokenize(text))
+    #ch_score = 206.835 - (1.015 * (num_words / num_sentences)) - (84.6 * (num_syllables / num_words))
+    #print contrib_score,ch_score
+    return contrib_score
 
 @nohtml
 @timeme
 def smog_readability(text):
-    sentences = sent_tokenize(text)
-    num_sentences = len(sentences)
-    polysyllables = sum(CountSyllables(x) > 3 for x in word_tokenize(text))
-    return 1.0430 * math.sqrt(polysyllables * (30 / num_sentences)) + 3.1291
+    rt = ReadabilityTool()
+    contrib_score = rt.SMOGIndex(text)
+    #sentences = sent_tokenize(text)
+    #num_sentences = len(sentences)
+    #polysyllables = sum(CountSyllables(x) > 3 for x in word_tokenize(text))
+    #ch_score = 1.0430 * math.sqrt(polysyllables * (30 / num_sentences)) + 3.1291
+    #print contrib_score,ch_score
+    return contrib_score
+
+@nohtml
+@timeme
+def coleman_liau_readability(text):
+    rt = ReadabilityTool()
+    contrib_score = rt.ColemanLiauIndex(text)
+    return contrib_score
 
 @timeme
 def number_of_grafs(text):
@@ -75,14 +94,14 @@ def punct_count(text, punct='?'):
 @timeme
 def pos_count(text,tag='NN'):
     words = word_tokenize(text)
-    cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
+    cfd = ConditionalFreqDist((tag,1) for word,tag in  tagger.tag(words))
     return cfd[tag].N()
 
 @nohtml
 @timeme
 def pos_percentages(text,tag='NN'):
     words = word_tokenize(text)
-    cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
+    cfd = ConditionalFreqDist((tag,1) for word,tag in  tagger.tag(words))
     return float(cfd[tag].N())/float(len(words))
 
 @timeme
@@ -106,7 +125,8 @@ def metrics(story):
          pos_percentages(story,'JJ'),
          avg_word_syllables(story),
          flesch_readability(story),
-         smog_readability(story)                        
+         smog_readability(story),
+         coleman_liau_readability(story)
     ]
 
 if __name__ == '__main__':
@@ -131,3 +151,5 @@ if __name__ == '__main__':
     print avg_word_syllables(story)
     print flesch_readability(story)
     print smog_readability(story) 
+    print coleman_liau_readability(story) 
+

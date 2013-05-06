@@ -29,7 +29,8 @@ def generate_report():
          'pos_percentages_JJ',
          'avg_word_syllables',
          'flesch_readability',
-         'smog_readability'
+         'smog_readability',
+         'coleman_liau_readability'
     ])
     for article in articles:
         results = [article.get_headline()] + metrics(article.__str__())

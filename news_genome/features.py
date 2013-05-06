@@ -1,34 +1,43 @@
 # -*- coding: utf-8 -*- 
+from timer import Timer
 import math
 from nltk import pos_tag,FreqDist,ConditionalFreqDist
 from nltk.tokenize import word_tokenize, sent_tokenize, regexp_tokenize
-from mlstripper import nohtml
+from mlstripper import nohtml,timeme
 from lib.SyllableCounter import CountSyllables
+from news_genome import ArticleSource
+import sys
 
 @nohtml
+@timeme
 def word_count(text):
     return len(word_tokenize(text))
 
 @nohtml
+@timeme
 def sentence_count(text):
     return len(sent_tokenize(text))
 
 @nohtml
+@timeme
 def avg_sentence_length(text):
     sents = [len(word_tokenize(s)) for s in sent_tokenize(text)]
     return reduce(lambda x, y: x + y, sents) / float(len(sents))
 
 @nohtml
+@timeme
 def avg_word_length(text):
     words = [len(w) for w in word_tokenize(text)]
     return reduce(lambda x, y: x + y, words) / float(len(words))
 
 @nohtml
+@timeme
 def avg_word_syllables(text):
     words = [float(CountSyllables(w)) for w in word_tokenize(text)]
     return reduce(lambda x, y: x + y, words) / float(len(words))
 
 @nohtml
+@timeme
 def flesch_readability(text):
     word_toks = word_tokenize(text)
     num_words = len(word_toks)
@@ -37,39 +46,46 @@ def flesch_readability(text):
     return 206.835 - (1.015 * (num_words / num_sentences)) - (84.6 * (num_syllables / num_words))
 
 @nohtml
+@timeme
 def smog_readability(text):
     sentences = sent_tokenize(text)
     num_sentences = len(sentences)
     polysyllables = sum(CountSyllables(x) > 3 for x in word_tokenize(text))
     return 1.0430 * math.sqrt(polysyllables * (30 / num_sentences)) + 3.1291
 
+@timeme
 def number_of_grafs(text):
     return len(regexp_tokenize(text, r'\<\/p\>', gaps=True))
 
+@timeme
 def avg_graf_length(text):
     grafs = [len(word_tokenize(p)) for p in regexp_tokenize(text, r'\<\/p\>', gaps=True)]
     return reduce(lambda x, y: x + y, grafs) / len(grafs)
 
+@timeme
 def length_of_first_graf(text):
     return word_count(regexp_tokenize(text, r'\<\/p\>', gaps=True)[0])
 
 @nohtml
+@timeme
 def punct_count(text, punct='?'):
     return len(list(filter(lambda c: c in text, punct)))
 
 @nohtml
+@timeme
 def pos_count(text,tag='NN'):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
     return cfd[tag].N()
 
 @nohtml
+@timeme
 def pos_percentages(text,tag='NN'):
     words = word_tokenize(text)
     cfd = ConditionalFreqDist((tag,1) for word,tag in  pos_tag(words))
     return float(cfd[tag].N())/float(len(words))
 
-@nohtml
+@timeme
 def metrics(story):
     return [
          word_count(story),

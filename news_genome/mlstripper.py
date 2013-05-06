@@ -1,3 +1,4 @@
+from timer import Timer
 from HTMLParser import HTMLParser
 from functools import wraps
 
@@ -22,3 +23,11 @@ def nohtml(fn):
         return fn(text,*args,**kwargs)
     return wrapper
 
+def timeme(fn):
+    @wraps(fn)
+    def wrapper(*args,**kwargs):
+        with Timer() as t:
+            ret = fn(*args,**kwargs)
+        print '%s: %s' % (fn.__name__,t.interval)
+        return ret
+    return wrapper

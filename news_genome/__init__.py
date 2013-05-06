@@ -1,3 +1,4 @@
+from timer import Timer
 import hashlib
 import urllib,urllib2
 import nltk
@@ -39,7 +40,8 @@ class ArticleSource():
             article_data = json.loads(urllib.urlopen(url).read())
             url,article = article_data.popitem()
             return Article(article)
-        except: 
+        except Exception as e:
+            print e
             raise StopIteration()
 
 
@@ -49,7 +51,7 @@ class Article():
         self.metadata = data['data']['cms']['article']
 
     def __str__(self):
-        return strip_tags(self.metadata['body'])
+        return self.metadata['body']
 
     def __hash__(self):
         return hashlib.md5(self.metadata['headline'])

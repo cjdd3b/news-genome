@@ -47,7 +47,7 @@ def avg_word_syllables(text):
 @nohtml
 @timeme
 def flesch_readability(text):
-    #text = text.encode('ascii','ignore')
+    text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.FleschReadingEase(text)
     #word_toks = word_tokenize(text)
@@ -61,7 +61,7 @@ def flesch_readability(text):
 @nohtml
 @timeme
 def smog_readability(text):
-    #text = text.encode('ascii','ignore')
+    text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.SMOGIndex(text)
     #sentences = sent_tokenize(text)
@@ -74,7 +74,7 @@ def smog_readability(text):
 @nohtml
 @timeme
 def coleman_liau_readability(text):
-    #text = text.encode('ascii','ignore')
+    text = text.encode('ascii','ignore')
     rt = ReadabilityTool()
     contrib_score = rt.ColemanLiauIndex(text)
     return contrib_score

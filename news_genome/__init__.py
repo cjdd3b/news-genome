@@ -51,7 +51,7 @@ class Article():
         self.metadata = data['data']['cms']['article']
 
     def __str__(self):
-        return self.metadata['body']
+        return self.metadata['body'].encode('utf8')
 
     def __hash__(self):
         return hashlib.md5(self.metadata['headline'])
